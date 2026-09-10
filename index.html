@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Capital OS — a risk-first automated trading system currently in development." />
+  <title>Capital OS — Risk-First Automated Trading System</title>
+  <style>
+    :root {
+      --bg: #071018;
+      --bg-soft: #0b1722;
+      --card: rgba(15, 31, 44, 0.84);
+      --card-strong: #102333;
+      --line: rgba(151, 180, 201, 0.18);
+      --text: #f5f9fc;
+      --muted: #9db1c1;
+      --accent: #56e3b8;
+      --accent-2: #5bbcff;
+      --warning: #ffd166;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(91, 188, 255, 0.14), transparent 28%),
+        radial-gradient(circle at 84% 18%, rgba(86, 227, 184, 0.12), transparent 30%),
+        linear-gradient(180deg, #061019 0%, #071018 100%);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(1160px, calc(100% - 36px)); margin: 0 auto; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(7, 16, 24, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #041018;
+      box-shadow: 0 0 32px rgba(86, 227, 184, 0.24);
+      font-weight: 900;
+    }
+    .nav-links { display: flex; gap: 22px; color: var(--muted); font-size: 0.95rem; }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero {
+      padding: 96px 0 72px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 52px;
+      align-items: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(86, 227, 184, 0.28);
+      background: rgba(86, 227, 184, 0.07);
+      color: #b9f6e2;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 16px var(--accent);
+    }
+    h1 {
+      margin: 18px 0 18px;
+      font-size: clamp(3.2rem, 7vw, 6.5rem);
+      line-height: 0.93;
+      letter-spacing: -0.055em;
+    }
+    h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .lead {
+      max-width: 740px;
+      font-size: clamp(1.08rem, 2vw, 1.32rem);
+      color: #bfd0dc;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+    .btn {
+      padding: 13px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #051119;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+
+    .terminal {
+      background: linear-gradient(180deg, rgba(16, 35, 51, 0.95), rgba(8, 20, 30, 0.95));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .terminal-bar {
+      height: 44px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 15px;
+    }
+    .terminal-bar i { width: 9px; height: 9px; border-radius: 50%; background: #6c7d8b; opacity: 0.7; }
+    .terminal-body { padding: 22px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.91rem; }
+    .row { display: flex; justify-content: space-between; gap: 18px; padding: 10px 0; border-bottom: 1px dashed rgba(157,177,193,0.12); }
+    .row:last-child { border-bottom: 0; }
+    .ok { color: var(--accent); font-weight: 700; }
+    .build { color: var(--warning); font-weight: 700; }
+    .muted { color: var(--muted); }
+
+    section { padding: 72px 0; }
+    .section-label {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 800;
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+    }
+    h2 { margin: 0 0 16px; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.06; letter-spacing: -0.04em; }
+    .section-intro { max-width: 760px; color: var(--muted); font-size: 1.07rem; }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 32px; }
+    .card {
+      padding: 24px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      box-shadow: 0 14px 38px rgba(0,0,0,0.12);
+    }
+    .card h3 { margin: 12px 0 8px; font-size: 1.12rem; }
+    .card p { margin: 0; color: var(--muted); }
+    .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(91, 188, 255, 0.09);
+      border: 1px solid rgba(91,188,255,0.18);
+      font-size: 1.15rem;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 34px;
+      align-items: stretch;
+    }
+    .flow-step {
+      position: relative;
+      min-height: 150px;
+      padding: 20px;
+      border-radius: 17px;
+      background: linear-gradient(180deg, rgba(16,35,51,.95), rgba(11,26,38,.92));
+      border: 1px solid var(--line);
+    }
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 3;
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 1.3rem;
+    }
+    .flow-n { color: var(--accent); font-size: .75rem; font-weight: 900; letter-spacing: .12em; }
+    .flow-step h3 { margin: 9px 0 7px; font-size: 1.02rem; }
+    .flow-step p { margin: 0; color: var(--muted); font-size: .92rem; }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 32px; }
+    .checklist { display: grid; gap: 12px; margin-top: 18px; }
+    .check {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      color: #d8e4ec;
+    }
+    .check b { color: var(--accent); }
+
+    .roadmap { margin-top: 30px; display: grid; gap: 14px; }
+    .phase {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 18px;
+      align-items: start;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(12, 27, 39, 0.7);
+    }
+    .phase-tag {
+      display: inline-flex;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(86,227,184,.08);
+      border: 1px solid rgba(86,227,184,.18);
+      color: var(--accent);
+      font-size: .8rem;
+      font-weight: 900;
+    }
+    .phase h3 { margin: 0 0 4px; }
+    .phase p { margin: 0; color: var(--muted); }
+
+    .funding {
+      margin-top: 32px;
+      padding: 30px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(86,227,184,.09), rgba(91,188,255,.08));
+      border: 1px solid rgba(117, 211, 205, .18);
+    }
+    .funding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 20px; }
+    .funding-item { padding: 18px; border-radius: 15px; background: rgba(4,15,23,.45); border: 1px solid var(--line); }
+    .funding-item strong { display: block; margin-bottom: 4px; }
+    .funding-item span { color: var(--muted); }
+
+    .quote {
+      margin: 38px 0 0;
+      padding: 28px;
+      border-left: 3px solid var(--accent);
+      background: rgba(86,227,184,.04);
+      color: #d9e9f1;
+      border-radius: 0 18px 18px 0;
+      font-size: 1.18rem;
+    }
+
+    footer {
+      padding: 38px 0 50px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .hero, .split, .funding-grid { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-step:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -20px; transform: translateX(-50%); }
+      .nav-links { display: none; }
+      .hero { padding-top: 64px; }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 24px, 1160px); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .phase { grid-template-columns: 1fr; gap: 10px; }
+      h1 { font-size: clamp(3rem, 18vw, 5rem); }
+      .hero-actions .btn { width: 100%; text-align: center; }
+      section { padding: 58px 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Capital OS home">
+        <span class="logo">C</span>
+        <span>Capital OS</span>
+      </a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#safety">Safety</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#funding">Funding</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top" class="wrap">
+    <header class="hero">
+      <div>
+        <div class="badge"><span class="dot"></span> Currently in development</div>
+        <h1>Capital <span>OS</span></h1>
+        <p class="lead">
+          A risk-first automated trading system designed to identify high-quality market setups,
+          enforce strict capital-protection rules and execute consistently without emotional decision-making.
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#how">See how it works</a>
+          <a class="btn" href="#funding">Why funding helps</a>
+        </div>
+      </div>
+
+      <div class="terminal" aria-label="Development status">
+        <div class="terminal-bar"><i></i><i></i><i></i></div>
+        <div class="terminal-body">
+          <div class="row"><span class="muted">Strategy rules</span><span class="ok">DEFINED</span></div>
+          <div class="row"><span class="muted">Risk architecture</span><span class="ok">DEFINED</span></div>
+          <div class="row"><span class="muted">Safety / fail-safe layer</span><span class="ok">INTEGRATED</span></div>
+          <div class="row"><span class="muted">Execution engine</span><span class="build">BUILDING</span></div>
+          <div class="row"><span class="muted">Backtesting</span><span class="build">NEXT</span></div>
+          <div class="row"><span class="muted">Demo trading</span><span class="muted">PLANNED</span></div>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <div class="section-label">The idea</div>
+      <h2>Trading automation built around survival first.</h2>
+      <p class="section-intro">
+        Capital OS is not designed to chase the highest possible return. The goal is to build a disciplined,
+        measurable system that prioritizes risk control, repeatability and long-term robustness across changing market conditions.
+      </p>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="icon">◫</div>
+          <h3>Rule-based decisions</h3>
+          <p>Entries require predefined market structure, trend, pullback/retest and confirmation conditions.</p>
+        </article>
+        <article class="card">
+          <div class="icon">⬡</div>
+          <h3>Risk before return</h3>
+          <p>Position risk, portfolio exposure and drawdown limits are enforced before a trade can be opened.</p>
+        </article>
+        <article class="card">
+          <div class="icon">↻</div>
+          <h3>Test, measure, refine</h3>
+          <p>Every rule must survive historical testing, simulated failures and extended demo validation before live use.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="section-label">How it works</div>
+      <h2>From market data to controlled execution.</h2>
+      <p class="section-intro">
+        The system processes market information through several independent checks. A trade only reaches execution
+        if the setup and the account both pass the required conditions.
+      </p>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-n">01 / DATA</div>
+          <h3>Market input</h3>
+          <p>Price, structure, volatility and trading-session context enter the system.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-n">02 / SETUP</div>
+          <h3>Signal detection</h3>
+          <p>The engine looks for predefined trend, pullback, retest and confirmation patterns.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-n">03 / QUALITY</div>
+          <h3>Trade filtering</h3>
+          <p>Weak, counter-trend, low-quality or unsuitable market conditions are rejected.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-n">04 / RISK</div>
+          <h3>Risk approval</h3>
+          <p>Exposure, drawdown, trade risk and account safety checks must all pass.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-n">05 / EXECUTION</div>
+          <h3>Order & monitoring</h3>
+          <p>Approved trades are executed, monitored and reconciled against broker state.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="safety">
+      <div class="section-label">Safety architecture</div>
+      <h2>The system is designed to fail safely.</h2>
+      <p class="section-intro">
+        Automated trading can fail for reasons unrelated to strategy: stale data, broker disconnects, duplicate orders,
+        execution drift or software faults. Capital OS therefore treats operational safety as a core feature, not an add-on.
+      </p>
+
+      <div class="split">
+        <div class="card">
+          <h3>Capital protection</h3>
+          <div class="checklist">
+            <div class="check"><b>✓</b><span>Hard position and portfolio risk limits</span></div>
+            <div class="check"><b>✓</b><span>Weekly and overall drawdown protection</span></div>
+            <div class="check"><b>✓</b><span>Exposure and position-count caps</span></div>
+            <div class="check"><b>✓</b><span>Risk reduction before any new trade is allowed</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Operational protection</h3>
+          <div class="checklist">
+            <div class="check"><b>✓</b><span>Kill switch and safe-mode behavior</span></div>
+            <div class="check"><b>✓</b><span>Broker and market-data health checks</span></div>
+            <div class="check"><b>✓</b><span>Automatic state reconciliation</span></div>
+            <div class="check"><b>✓</b><span>New trades blocked when system confidence is compromised</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="section-label">Validation roadmap</div>
+      <h2>No meaningful capital before proof.</h2>
+      <p class="section-intro">
+        Capital OS follows a staged development path. Each phase must meet defined reliability and performance criteria before moving forward.
+      </p>
+
+      <div class="roadmap">
+        <div class="phase">
+          <div class="phase-tag">NOW</div>
+          <div><h3>Core engineering</h3><p>Finish execution, broker connectivity, monitoring and remaining system components.</p></div>
+        </div>
+        <div class="phase">
+          <div class="phase-tag">NEXT</div>
+          <div><h3>Historical backtesting</h3><p>Test performance, drawdown behavior, expectancy and consistency across different market regimes.</p></div>
+        </div>
+        <div class="phase">
+          <div class="phase-tag">THEN</div>
+          <div><h3>Demo validation</h3><p>Run the complete system in real market conditions without risking capital and compare results against the backtest assumptions.</p></div>
+        </div>
+        <div class="phase">
+          <div class="phase-tag">LATER</div>
+          <div><h3>Small live test</h3><p>Only after passing prior stages, deploy a very small amount of real capital to validate execution under live conditions.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="funding">
+      <div class="section-label">Why support matters</div>
+      <h2>Funding would accelerate validation — not increase trading risk.</h2>
+      <p class="section-intro">
+        The purpose of early funding is to cover the infrastructure and testing needed to prove or disprove the system properly.
+        It is not intended to be used as speculative trading capital.
+      </p>
+
+      <div class="funding">
+        <div class="funding-grid">
+          <div class="funding-item"><strong>Historical market data</strong><span>Higher-quality datasets for realistic and repeatable backtesting.</span></div>
+          <div class="funding-item"><strong>VPS & infrastructure</strong><span>Reliable always-on hosting for demo and later live validation.</span></div>
+          <div class="funding-item"><strong>Broker & API testing</strong><span>Connectivity, execution, reconciliation and failure-handling validation.</span></div>
+          <div class="funding-item"><strong>Testing & monitoring tools</strong><span>Logging, analytics, simulated failures and performance measurement.</span></div>
+        </div>
+      </div>
+
+      <div class="quote">
+        “The objective is not to prove that Capital OS can make money quickly. The objective is to prove that it can behave consistently,
+        protect capital and remain reliable before meaningful real money is ever put at risk.”
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Success criteria</div>
+      <h2>What would make the project worth continuing?</h2>
+      <div class="grid-3">
+        <article class="card"><h3>Robust performance</h3><p>Results remain acceptable across different time periods and market conditions rather than one optimized sample.</p></article>
+        <article class="card"><h3>Controlled drawdowns</h3><p>Losses remain inside predefined limits and safety rules work exactly as intended under stress.</p></article>
+        <article class="card"><h3>Live-test parity</h3><p>Demo and small-live execution remain sufficiently close to modeled expectations before scaling is considered.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© 2026 Capital OS. Independent research & development project.</span>
+      <span>Trading involves risk. No performance or profit is guaranteed.</span>
+    </div>
+  </footer>
+</body>
+</html>
